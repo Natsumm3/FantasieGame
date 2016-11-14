@@ -28,11 +28,15 @@ namespace FantasyGame
         {
             get
             {
+                if (index > size)
+                    throw new IndexOutOfRangeException();
                 return scenes[index];
             }
 
             set
             {
+                if (index > size)
+                    throw new IndexOutOfRangeException();
                 scenes[index] = value;
             }
         }
@@ -90,17 +94,17 @@ namespace FantasyGame
 
         public void CopyTo(Scene[] array)
         {
-            if (array.Length < count)
-                throw new InsufficientMemoryException("the List is longer than the Array");
-            for(int i = 0; i < count; i++)
-            {
-                array[i] = scenes[i];
-            }
+            CopyTo(array, 0);
         }
 
         public void CopyTo(Scene[] array, int arrayIndex)
         {
-            
+            if (array.Length - arrayIndex < count)
+                throw new InsufficientMemoryException("the List is longer than the Array");
+            for (int i = 0; i < count; i++)
+            {
+                array[i + arrayIndex] = scenes[i];
+            }
         }
 
         public IEnumerator<Scene> GetEnumerator()
@@ -110,7 +114,7 @@ namespace FantasyGame
 
         public int IndexOf(Scene item)
         {
-            for (int i = 0; i < count; count++)
+            for (int i = 0; i < count; i++)
             {
                 if (scenes[i] == item)
                     return i;
@@ -120,17 +124,41 @@ namespace FantasyGame
 
         public void Insert(int index, Scene item)
         {
-            throw new NotImplementedException();
+            if (index > size)
+                throw new IndexOutOfRangeException();
+            for(int i = count;i > index; i--)
+            {
+                scenes[i] = scenes[i - 1];
+            }
+            scenes[index] = item;
+            count++;
         }
 
         public bool Remove(Scene item)
         {
-            throw new NotImplementedException();
+            bool found = false;
+            for (int i = 0; i < count; i++)
+            {
+                if (scenes[i] == item)
+                {
+                    RemoveAt(i);
+                    i--;
+                    found = true;
+                }
+            }
+            return found;
         }
 
         public void RemoveAt(int index)
         {
-            throw new NotImplementedException();
+            if (index > count)
+                throw new IndexOutOfRangeException();
+            for (int i = index; i + 1 < count; i++)
+            {
+                scenes[i] = scenes[i + 1];
+            }
+            count--;
+            scenes[count] = null;
         }
 
         IEnumerator IEnumerable.GetEnumerator()

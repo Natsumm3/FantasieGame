@@ -35,9 +35,11 @@ namespace FantasyGame
 
             set
             {
-                if (index > size)
-                    throw new IndexOutOfRangeException();
+                while (index > size)
+                    Resize();
                 scenes[index] = value;
+                if (index >= count)
+                    count = index + 1;
             }
         }
 
@@ -53,7 +55,7 @@ namespace FantasyGame
         {
             get
             {
-                throw new NotImplementedException();
+                return false;
             }
         }
 

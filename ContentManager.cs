@@ -12,9 +12,9 @@ using SFML.Window;
 
 namespace LoadXML
 {
-    public static class ContentManager
+    static class ContentManager
     {
-
+        public static List<SpriteMap> spriteMaps = new List<SpriteMap>();
     }
 
     class SpriteMap
@@ -33,16 +33,20 @@ namespace LoadXML
         {
             this.id = id;
             this.name = name;
-            texture = new Texture(fileName);
-            for (int i = 0; i < (width * height); i++)
-            {
+            Texture texture = new Texture(fileName);
+            Sprites = new List<Sprite>();
 
+            for (int i = 0; i < (width * height) + 1; i++)
+            {  
+                if (i == 0)
+                    Sprites.Add(new Sprite((texture), new IntRect(new Vector2i(0,0), new Vector2i(0,0)))); 
+                else    
+                    Sprites.Add(new Sprite(texture, new IntRect(new Vector2i(((i-1) % width) * tilewidth, ((i - 1) / width) * tileheight), new Vector2i(tilewidth,tileheight))));
             }
         }
 
-        int id;
-        string name { get; }
-        Texture texture;
-        Sprite[,] sprites;
+        public int id { get; }
+        public string name { get; }
+        public List<Sprite> Sprites { get; }
     }
 }

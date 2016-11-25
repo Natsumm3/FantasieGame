@@ -20,6 +20,10 @@ namespace LoadXML
         public Map()
         {}
 
+        /// <summary>
+        /// Initializes the Map
+        /// </summary>
+        /// <param name="xmlFile">.XML / .TMX File or Path</param>
         public Map(string xmlFile)
         {
             StreamReader reader = new StreamReader(xmlFile);
@@ -32,8 +36,27 @@ namespace LoadXML
             tileheight = map.tileheight;
             layers = map.layers;
             objectgroups = map.objectgroups;
-            tileset = map.tileset;
+            tilesets = map.tilesets;
+
+            AddTiles();
+        }
+
+        /// <summary>
+        /// Initializing-Logic
+        /// </summary>
+        private void AddTiles()
+        {
             Tiles = new List<int[,]>();
+            spriteMap = new List<int>();
+
+            for (int s = 0; s < ContentManager.spriteMaps.Count; s++)
+            {
+                for (int t = 0; t < tilesets.Length; t++)
+                {
+                    if (ContentManager.spriteMaps[s].name == tilesets[t].name)
+                        spriteMap.Add(s);
+                }
+            }
 
             for (int i = 0; i < layers.Length; i++)
             {
@@ -63,25 +86,40 @@ namespace LoadXML
             return tiles;
         }
 
+        /// <summary>
+        /// Returns the Tiles within the wanted Layer of the Map
+        /// </summary>
         public int[,] GetTiles(int layer)
         {
             return Tiles[layer];
         }
 
+        /// <summary>
+        /// Updates the Map
+        /// </summary>
         public void Update()
         {
 
         }
 
-        public void Draw(RenderWindow window)
+        /// <summary>
+        /// Draws the Map
+        /// </summary>
+        public void Draw(RenderWindow window, View view)
         {
             for (int i = 0; i < Tiles.Count ; i++)
             {
-                for (int y = 0; y < Tiles[i].GetLength(1) ; y++)
+                for (int y = ((int)(view.Center.Y - (view.Size.Y / 2)) / tileheight); y < ((int)(view.Center.Y + (view.Size.Y / 2)) / tileheight + 1); y++)
                 {
-                    for (int x = 0; x < Tiles[i].GetLength(0); x++)
+                    for (int x = ((int)(view.Center.X- (view.Size.X / 2)) / tilewidth); x < ((int)(view.Center.X + (view.Size.X / 2)) / tilewidth + 1); x++)
                     {
-                        //window.Draw();
+                        int currentSpriteMap = 0;
+                        for (int r = 0; r < tilesets.Length; r++)
+                            if (Tiles[i][x, y] >= tilesets[r].firstgid)
+                                currentSpriteMap = r;
+
+                        ContentManager.spriteMaps[spriteMap[currentSpriteMap]].Sprites[Tiles[i][x, y] - (tilesets[currentSpriteMap].firstgid - 1)].Position = new Vector2f(x * tilewidth, y * tileheight);
+                        window.Draw(ContentManager.spriteMaps[spriteMap[currentSpriteMap]].Sprites[Tiles[i][x,y] - (tilesets[currentSpriteMap].firstgid - 1)]);
                     }
                 }
             }
@@ -92,6 +130,8 @@ namespace LoadXML
 
 
         #region Variables
+
+        List<int> spriteMap;
 
         List<int[,]> Tiles;
 
@@ -138,7 +178,7 @@ namespace LoadXML
         }
 
         [XmlElement("tileset")]
-        public Tileset tileset
+        public Tileset[] tilesets
         {
             get;
             set;
@@ -190,15 +230,8 @@ namespace LoadXML
             set;
         }
 
-        [XmlAttribute("tilecount")]
-        public int tileCount
-        {
-            get;
-            set;
-        }
-
-        [XmlAttribute("columns")]
-        public int columns
+        [XmlAttribute("firstgid")]
+        public int firstgid
         {
             get;
             set;

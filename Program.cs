@@ -17,11 +17,47 @@ namespace LoadXML
     {
         static void Main(string[] args)
         {
-            Map map = new Map("map01.xml");
+            RenderWindow window = new RenderWindow(new VideoMode( 1280, 720), "lol", Styles.Default);
 
-            Console.WriteLine(map.GetTiles(1)[1,10]);
+            Vector2f position = new Vector2f(1000, 1000);
 
-            while (true) ;
+            View view = new View(new Vector2f(1000, 1000), new Vector2f(1280, 720));
+
+            view.Center = position;
+            window.SetView(view);
+
+            //ContentManager.spriteMaps.Add(new SpriteMap(0, "terrain_atlas", "terrain_atlas.png", 32, 32, 32, 32));
+            //ContentManager.spriteMaps.Add(new SpriteMap(1, "BLA", "BLA.png", 32, 32, 1, 1));
+            //Map map = new Map("map01.tmx");
+
+            ContentManager.spriteMaps.Add(new SpriteMap(0, "terrain_atlas" ,"terrain_atlas.png", 32,32,32,32));
+            ContentManager.spriteMaps.Add(new SpriteMap(1, "base_out_atlas", "base_out_atlas.png", 32, 32, 32, 32));
+            ContentManager.spriteMaps.Add(new SpriteMap(2, "houses", "houses.png", 32, 32, 13, 16));
+
+
+            Map world = new Map("fantasieWorld.tmx");
+
+
+            while (true)
+            {
+                if (Keyboard.IsKeyPressed(Keyboard.Key.Down))
+                    position.Y += 10;
+                if (Keyboard.IsKeyPressed(Keyboard.Key.Up))
+                    position.Y -= 10;
+                if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
+                    position.X -= 10;
+                if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
+                    position.X += 10;
+
+                view.Center = position;
+                window.SetView(view);
+
+                window.Clear();
+
+                world.Draw(window, view);
+
+                window.Display();
+            }
         }
     }
 }

@@ -113,13 +113,17 @@ namespace LoadXML
                 {
                     for (int x = ((int)(view.Center.X- (view.Size.X / 2)) / tilewidth); x < ((int)(view.Center.X + (view.Size.X / 2)) / tilewidth + 1); x++)
                     {
-                        int currentSpriteMap = 0;
-                        for (int r = 0; r < tilesets.Length; r++)
-                            if (Tiles[i][x, y] >= tilesets[r].firstgid)
-                                currentSpriteMap = r;
+                        if (-1 < x && x < width && -1 < y && y < height)
+                        {
+                            int currentSpriteMap = 0;
+                            for (int r = 0; r < tilesets.Length; r++)
+                                if (Tiles[i][x, y] >= tilesets[r].firstgid)
+                                    currentSpriteMap = r;
 
-                        ContentManager.spriteMaps[spriteMap[currentSpriteMap]].Sprites[Tiles[i][x, y] - (tilesets[currentSpriteMap].firstgid - 1)].Position = new Vector2f(x * tilewidth, y * tileheight);
-                        window.Draw(ContentManager.spriteMaps[spriteMap[currentSpriteMap]].Sprites[Tiles[i][x,y] - (tilesets[currentSpriteMap].firstgid - 1)]);
+                            ContentManager.spriteMaps[spriteMap[currentSpriteMap]].Sprites[Tiles[i][x, y] - (tilesets[currentSpriteMap].firstgid - 1)].Position = new Vector2f(x * tilewidth, y * tileheight);
+                            window.Draw(ContentManager.spriteMaps[spriteMap[currentSpriteMap]].Sprites[Tiles[i][x,y] - (tilesets[currentSpriteMap].firstgid - 1)]);
+                        }
+
                     }
                 }
             }

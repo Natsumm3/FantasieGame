@@ -17,7 +17,8 @@ namespace LoadXML
     {
         static void Main(string[] args)
         {
-            RenderWindow window = new RenderWindow(new VideoMode( 1280, 720), "lol", Styles.Default);
+            RenderWindow window = new RenderWindow(new VideoMode( 1280, 720), "lol", Styles.Fullscreen);
+            window.SetFramerateLimit(60);
 
             Vector2f position = new Vector2f(1000, 1000);
 
@@ -48,6 +49,10 @@ namespace LoadXML
                     position.X -= 10;
                 if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
                     position.X += 10;
+                if (Keyboard.IsKeyPressed(Keyboard.Key.Escape))
+                    window.Close();
+
+                window.DispatchEvents();
 
                 view.Center = position;
                 window.SetView(view);
